@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sonya — ML & Aerospace</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       NAV
+  ═══════════════════════════════════════ -->
+  <nav class="nav">
+    <span class="nav-logo">sonya.</span>
+    <ul class="nav-links">
+      <li><a href="#about">about</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#research">research</a></li>
+      <li><a href="#interests">interests</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       HERO
+       Floating objects live here as absolutely
+       positioned <img> or <div> elements.
+       Add them in the .hero-objects container.
+  ═══════════════════════════════════════ -->
+  <section class="hero" id="hero">
+
+    <!-- Floating object slots — swap src for real images later -->
+    <div class="hero-objects">
+      <div class="obj obj-1" data-label="smiski"><!-- 🟡 smiski figure --></div>
+      <div class="obj obj-2" data-label="matcha"><!-- 🍵 matcha --></div>
+      <div class="obj obj-3" data-label="camera"><!-- 📷 fujifilm --></div>
+      <div class="obj obj-4" data-label="laptop"><!-- 💻 laptop --></div>
+      <div class="obj obj-5" data-label="cat"><!-- 🐱 cat --></div>
+      <div class="obj obj-6" data-label="book"><!-- 📖 book --></div>
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">aerospace · ML · math</p>
+      <h1 class="hero-headline">hi, i'm sonya.</h1>
+      <p class="hero-sub">
+        incoming UCSD ML grad student.<br>
+        i build things at the edge of math and machines.
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn-primary">see my work</a>
+        <a href="#contact" class="btn-ghost">get in touch</a>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       ABOUT
+  ═══════════════════════════════════════ -->
+  <section class="section" id="about">
+    <div class="section-inner">
+      <h2 class="section-title">about</h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            B.S. Aerospace Engineering + Mathematics, Penn State Schreyer Honors College.
+            Starting M.S. Machine Learning & Data Science (ECE) at UCSD, Fall 2026.
+          </p>
+          <p>
+            My work lives at the intersection of rigorous math and applied ML —
+            random matrix theory, fractal geometry, neural signal analysis.
+          </p>
+          <p>
+            Outside of research: film photography (Fujifilm X-T5), cycling, slow travel,
+            and hunting for good matcha.
+          </p>
+        </div>
+        <div class="about-photo">
+          <!-- Drop your photo here -->
+          <div class="photo-placeholder">[photo]</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       PROJECTS
+  ═══════════════════════════════════════ -->
+  <section class="section section-alt" id="projects">
+    <div class="section-inner">
+      <h2 class="section-title">projects</h2>
+      <div class="project-grid">
+
+        <article class="project-card">
+          <div class="project-tag">ML · Neuroscience</div>
+          <h3 class="project-name">EEG Seizure Detection</h3>
+          <p class="project-desc">
+            CNN-based seizure detection on the CHB-MIT scalp EEG dataset.
+            Patient-specific label construction, vectorized inference pipeline.
+          </p>
+          <div class="project-links">
+            <a href="#" class="link-arrow">GitHub →</a>
+            <a href="#" class="link-arrow">Paper →</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-tag">ML · Math</div>
+          <h3 class="project-name">Neural Network Pruning via RMT</h3>
+          <p class="project-desc">
+            Honors thesis. Applied Random Matrix Theory to identify redundant
+            weights in neural networks. Published in AIAA.
+          </p>
+          <div class="project-links">
+            <a href="#" class="link-arrow">AIAA Paper →</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-tag">Coming soon</div>
+          <h3 class="project-name">+ add your own</h3>
+          <p class="project-desc">
+            Slot for a future project — side project, internship work, etc.
+          </p>
+          <div class="project-links"></div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       RESEARCH
+  ═══════════════════════════════════════ -->
+  <section class="section" id="research">
+    <div class="section-inner">
+      <h2 class="section-title">research</h2>
+      <div class="research-list">
+
+        <div class="research-item">
+          <span class="research-year">2025–</span>
+          <div class="research-body">
+            <h3>Multi-Agent Bartering Simulation</h3>
+            <p>
+              LLM agents studied for preference drift and rhetoric contagion.
+              Metrics design focus — CoT-based metrics, Hurst exponent for hoarding detection.
+              Dr. Wagner's group, Penn State.
+            </p>
+          </div>
+        </div>
+
+        <div class="research-item">
+          <span class="research-year">2024–</span>
+          <div class="research-body">
+            <h3>EEG Seizure Detection CNN</h3>
+            <p>
+              Building and evaluating deep learning pipelines on CHB-MIT dataset.
+              Multifractal analysis + fractal geometry as feature extraction angle.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       INTERESTS
+       This is a good section for floating-object
+       style layout — each interest as a "chip" or
+       scattered card.
+  ═══════════════════════════════════════ -->
+  <section class="section section-alt" id="interests">
+    <div class="section-inner">
+      <h2 class="section-title">when i'm not coding</h2>
+      <div class="interests-scatter">
+        <div class="interest-chip">📷 film photography</div>
+        <div class="interest-chip">🚴 cycling</div>
+        <div class="interest-chip">🍵 matcha</div>
+        <div class="interest-chip">✈️ slow travel</div>
+        <div class="interest-chip">🛋️ interior design</div>
+        <div class="interest-chip">📐 measure theory</div>
+        <div class="interest-chip">🐱 cats</div>
+        <div class="interest-chip">📸 instagram @hey_this_is_s</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CONTACT
+  ═══════════════════════════════════════ -->
+  <section class="section" id="contact">
+    <div class="section-inner contact-inner">
+      <h2 class="section-title">say hi</h2>
+      <p class="contact-sub">open to research collabs, internships, and good coffee recommendations.</p>
+      <div class="contact-links">
+        <a href="mailto:you@email.com" class="contact-link">email</a>
+        <a href="https://linkedin.com/in/yourhandle" class="contact-link">linkedin</a>
+        <a href="https://github.com/yourhandle" class="contact-link">github</a>
+        <a href="https://instagram.com/hey_this_is_s" class="contact-link">instagram</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer class="footer">
+    <p>© 2026 sonya — built from scratch</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
