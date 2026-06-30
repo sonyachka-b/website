@@ -3,213 +3,722 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sonya — ML & Aerospace</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Sonya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Pinyon+Script&family=Caveat:wght@400;500;600&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
+    body { background: #F8EFE2; font-family: "DM Sans", sans-serif; }
+    a { text-decoration: none; color: inherit; }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.025; pointer-events: none; z-index: 9999;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      display: flex; justify-content: center;
+      gap: 1.85rem; padding: 18px 0;
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(248,239,226,0.92);
+      backdrop-filter: blur(6px);
+    }
+    .nav a { font-size: 13px; font-weight: 400; color: #3A1F1C; letter-spacing: 0.01em; }
+    .nav a.active {
+      text-decoration: underline; text-decoration-color: #3A1F1C;
+      text-decoration-thickness: 2px; text-underline-offset: 4px; font-weight: 500;
+    }
+
+    /* ── HERO — full viewport, vertically centered ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 92px 28px 76px;
+    }
+    /* 3-column grid: left 200 | center | right 200 */
+    .hero-inner {
+      position: relative;
+      width: 100%;
+      max-width: 1280px;
+      min-height: 560px;
+      display: grid;
+      grid-template-columns: 200px minmax(0, 1fr) 200px;
+      grid-template-rows: 560px;
+      align-items: center;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    /* ── COLUMNS ── */
+    .col {
+      position: relative; z-index: 3;
+      align-self: stretch;                /* fill the row */
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: space-between;
+    }
+    /* left column pulled toward the text */
+    .col-left  { align-items: flex-end;   padding-right: 22px; transform: translateX(10px); }
+    /* right column pulled toward the center (shifted left significantly) */
+    .col-right { align-items: flex-start; padding-left: 22px; transform: translateX(-46px); }
+    /* center column: text (left) + girl (right), tops aligned */
+    .col-center {
+      align-self: center;                 /* shrink to content, vertically centered */
+      z-index: 2;
+      display: flex; flex-direction: row;
+      align-items: flex-start; justify-content: space-between;
+      gap: 24px;
+    }
+
+    /* ── GIRL — center-right, the visual anchor ── */
+    .illo {
+      flex-shrink: 0;
+      display: flex; align-items: flex-start; justify-content: center;
+      overflow: visible;                 /* never clip her */
+      transform: translate(-18px, -14px); /* nudge slightly up & left */
+      z-index: 1;
+      pointer-events: none;
+    }
+    .illo img {
+      max-height: 560px; max-width: 520px;
+      height: auto; width: auto;
+      object-fit: contain; display: block;
+    }
+
+    /* ── OBJECT GROUP (image + arrow + label) ── */
+    .objgrp {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      overflow: visible;
+    }
+    .objgrp-float {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 4px;
+      will-change: transform;
+    }
+    .objgrp img {
+      display: block; object-fit: contain;
+      /* stopgap warm tint until watercolor/sketch assets are ready */
+      filter: sepia(0.2) saturate(0.85) brightness(1.05);
+    }
+    /* note-style text label under each object — no tint */
+    .obj-label {
+      display: block; margin-top: -16px;
+      object-fit: contain; filter: none !important;
+    }
+    .objgrp .arrow { overflow: visible; }
+
+    /* ── gentle floating (smooth, each slightly different) ── */
+    @keyframes floaty {
+      0%   { transform: translate(0, 0); }
+      25%  { transform: translate(8px, -11px); }
+      50%  { transform: translate(0, -17px); }
+      75%  { transform: translate(-8px, -10px); }
+      100% { transform: translate(0, 0); }
+    }
+    @keyframes floatyB {
+      0%   { transform: translate(0, 0); }
+      33%  { transform: translate(-10px, -8px); }
+      66%  { transform: translate(8px, -14px); }
+      100% { transform: translate(0, 0); }
+    }
+    .col-left  .objgrp:first-child .objgrp-float { animation: floaty  6.5s ease-in-out infinite; }
+    .col-left  .objgrp:last-child  .objgrp-float { animation: floatyB 7.8s ease-in-out infinite 0.6s; }
+    .col-right .objgrp:first-child .objgrp-float { animation: floatyB 7.2s ease-in-out infinite 0.3s; }
+    .col-right .objgrp:last-child  .objgrp-float { animation: floaty  8.4s ease-in-out infinite 1.1s; }
+
+    /* hover: stop floating + enlarge 10% */
+    .objgrp { cursor: pointer; transition: transform 0.25s ease; }
+    .objgrp:hover { transform: scale(1.1); z-index: 6; }
+    .objgrp:hover .objgrp-float { animation-play-state: paused; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .objgrp-float { animation: none !important; }
+    }
+
+    /* ── PILLS ── */
+    .pill {
+      display: inline-block; padding: 4px 13px;
+      font-size: 11px; font-family: "DM Sans", sans-serif;
+      font-weight: 400; letter-spacing: 0.02em;
+      border: 1.5px solid #A55B45; border-radius: 7px;
+      background: #F8EFE2; color: #85584B;
+      white-space: nowrap; transition: box-shadow 0.15s;
+    }
+    .pill:hover { box-shadow: 0 2px 10px rgba(165,91,69,0.2); }
+
+    /* ── TITLE ── */
+    .title-block { position: relative; z-index: 4; transform: translateX(150px); }
+    .title-block h1 {
+      font-family: "Cormorant Garamond", serif; font-weight: 700;
+      color: #8D372E; line-height: 1.03; margin: 0;
+    }
+    /* "this is" — indented to line up with the "onya" (past the S), lowered close to Sonya */
+    .t-sm {
+      font-size: 50px; display: block; color: #A63D1A;
+      font-family: 'Bickham Script Pro', 'Pinyon Script', cursive;
+      font-weight: 400; font-style: normal;
+      margin-left: 72px;
+      transform: translate(22px, 24px);
+    }
+    /* "hey," — Bickham Script Pro, bigger */
+    .t-hey {
+      font-size: 100px; display: block; color: #A63D1A; line-height: 1.0;
+      font-family: 'Bickham Script Pro', 'Pinyon Script', cursive;
+      font-weight: 400; font-style: normal;
+      transform: translate(22px, 30px);
+    }
+    .t-lg {
+      font-family: 'Saol Display', 'Playfair Display', serif;
+      font-size: 96px; display: block;
+      font-style: normal; font-weight: 800;
+      position: relative; letter-spacing: -1px;
+      color: #A63D1A;
+      margin-top: -14px;   /* pull up so the S overlaps the gap under "this is" */
+    }
+    /* ✦ sparkles flanking "Sonya" */
+    .sonya-spark {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      color: #C4623A; font-size: 12px;
+      font-family: "DM Sans", sans-serif; pointer-events: none;
+    }
+    .sonya-spark.l { right: 100%; margin-right: 12px; }
+    .sonya-spark.r { left: 100%;  margin-left: 12px; }
+
+    /* horizontal label + arrow row under each object */
+    .label-row { display: flex; align-items: center; gap: 5px; }
+    .title-desc {
+      margin-top: 26px; font-size: 12px;
+      font-family: "Space Mono", monospace;
+      color: #85584B; line-height: 1.7; max-width: 240px;
+    }
+    .title-hand {
+      margin-top: 44px; margin-left: 56px;
+      font-family: "Caveat", cursive;
+      font-size: 21px; color: #C4623A; font-weight: 500;
+      display: inline-block;
+      transform: rotate(-5deg); transform-origin: left center;
+      cursor: default;
+    }
+    /* playful rock back and forth between -5° and 5° while hovered */
+    @keyframes wiggle {
+      0%   { transform: rotate(-5deg); }
+      50%  { transform: rotate(5deg); }
+      100% { transform: rotate(-5deg); }
+    }
+    .title-hand:hover { animation: wiggle 0.7s ease-in-out infinite; }
+
+    /* ── DECO ── */
+    .deco { position: absolute; pointer-events: none; z-index: 5; }
+
+    /* ── SCROLL — near bottom of viewport ── */
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      font-size: 13px; color: #A07060; opacity: 0.85;
+      letter-spacing: 0.1em; z-index: 20;
+      font-family: "Space Mono", monospace;
+      cursor: pointer;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .scroll-hint:hover { transform: translateX(-50%) scale(1.22); opacity: 1; }
+    /* dim everything else while hovering the scroll hint */
+    .hero-inner { transition: opacity 0.25s ease; }
+    .hero:has(.scroll-hint:hover) .hero-inner { opacity: 0.3; }
+    #root { display: flex; flex-direction: column; }
+
+    /* ════════════════════════════════════════
+       CONTENT SECTIONS — same stationery style
+    ════════════════════════════════════════ */
+    .section {
+      position: relative;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 86px 40px;
+    }
+    .section.alt-pad { padding-top: 40px; }
+
+    /* section heading: Cormorant maroon + hand-drawn underline */
+    .sec-head {
+      position: relative;
+      display: inline-block;
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 700;
+      font-size: 46px;
+      color: #8D372E;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .sec-head .ul { margin-top: 4px; }
+    .sec-sub {
+      font-family: "Caveat", cursive;
+      font-size: 20px;
+      color: #A55B45;
+      margin-bottom: 36px;
+    }
+
+    /* ABOUT */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 56px;
+      align-items: center;
+      margin-top: 14px;
+    }
+    .about-text p {
+      font-size: 14px; color: #85584B; line-height: 1.85;
+      max-width: 460px;
+    }
+    .about-text p + p { margin-top: 16px; }
+    .about-photo {
+      position: relative;
+      justify-self: center;
+      padding: 14px 14px 46px;
+      background: #FBF4EA;
+      border: 1.5px solid #E4D2BE;
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(120,70,40,0.10);
+      transform: rotate(2.2deg);
+    }
+    .about-photo img {
+      width: 230px; height: 240px;
+      object-fit: cover; object-position: top center;
+      display: block; border-radius: 2px;
+    }
+    .about-photo .cap {
+      position: absolute; left: 0; right: 0; bottom: 12px;
+      text-align: center;
+      font-family: "Caveat", cursive;
+      font-size: 19px; color: #A55B45;
+    }
+
+    /* INTERESTS */
+    .chips { display: flex; flex-wrap: wrap; gap: 13px; max-width: 720px; }
+    .chip {
+      padding: 8px 18px;
+      border: 1.5px solid #A55B45;
+      border-radius: 999px;
+      font-size: 13.5px; color: #85584B;
+      background: #FBF4EA;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .chip:nth-child(3n)   { transform: rotate(-1.6deg); }
+    .chip:nth-child(3n+1) { transform: rotate(1.3deg); }
+    .chip:hover { box-shadow: 0 3px 12px rgba(165,91,69,0.18); transform: translateY(-2px); }
+
+    /* PROJECTS */
+    .proj-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 22px;
+    }
+    .proj-card {
+      background: #FBF4EA;
+      border: 1.5px solid #E4D2BE;
+      border-radius: 12px;
+      padding: 24px 24px 22px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+    }
+    .proj-card:hover {
+      transform: translateY(-3px);
+      border-color: #A55B45;
+      box-shadow: 0 10px 26px rgba(120,70,40,0.10);
+    }
+    .proj-tag {
+      font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #A55B45; font-weight: 500;
+    }
+    .proj-name {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 700; font-size: 21px; color: #8D372E; line-height: 1.15;
+    }
+    .proj-desc { font-size: 13px; color: #85584B; line-height: 1.7; flex: 1; }
+    .proj-links { display: flex; gap: 16px; margin-top: 4px; }
+    .proj-links a {
+      font-size: 12.5px; font-weight: 500; color: #A55B45;
+    }
+    .proj-links a:hover { text-decoration: underline; }
+
+    /* EDUCATION timeline */
+    .edu-list { display: flex; flex-direction: column; gap: 30px; max-width: 720px; }
+    .edu-item {
+      display: grid; grid-template-columns: 86px 1fr; gap: 24px;
+      align-items: start;
+    }
+    .edu-year {
+      font-family: "Caveat", cursive; font-size: 21px;
+      color: #A55B45; padding-top: 2px;
+    }
+    .edu-body h3 {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 700; font-size: 20px; color: #8D372E; margin-bottom: 4px;
+    }
+    .edu-body p { font-size: 13px; color: #85584B; line-height: 1.7; }
+
+    /* CONTACT */
+    .contact { text-align: center; }
+    .contact .sec-head { display: inline-block; }
+    .contact-sub {
+      font-size: 14px; color: #85584B; margin: 14px 0 30px;
+    }
+    .contact-links {
+      display: flex; justify-content: center; gap: 34px; flex-wrap: wrap;
+    }
+    .contact-links a {
+      font-size: 15px; color: #8D372E; font-weight: 500;
+      border-bottom: 1.5px solid #D49C80; padding-bottom: 3px;
+      transition: border-color 0.15s;
+    }
+    .contact-links a:hover { border-color: #8D372E; }
+
+    /* FOOTER */
+    .footer {
+      text-align: center; padding: 34px 20px 40px;
+      font-size: 12px; color: #A98A78;
+      border-top: 1px solid #E4D2BE;
+      max-width: 960px; margin: 20px auto 0;
+    }
+    .footer .heart { font-family: "Caveat", cursive; font-size: 16px; color: #A55B45; }
+
+    /* divider doodle */
+    .sec-divider {
+      max-width: 960px; margin: 0 auto; height: 1px;
+      background: linear-gradient(90deg, transparent, #E4D2BE 18%, #E4D2BE 82%, transparent);
+    }
+
+    @media (max-width: 760px) {
+      .about-grid { grid-template-columns: 1fr; gap: 36px; }
+      .about-photo { justify-self: start; }
+      .edu-item { grid-template-columns: 1fr; gap: 4px; }
+      .section { padding: 60px 26px; }
+      .sec-head { font-size: 38px; }
+    }
+  </style>
 </head>
 <body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script>
+    "use strict";
+    const h = React.createElement;
+    const C = {
+      bg:'#F8EFE2', maroon:'#8D372E', body:'#85584B',
+      deco:'#D49C80', bdr:'#A55B45',
+      spark:'#C4623A',   /* terracotta-orange sparkles */
+      arrow:'#C4623A',   /* hand-drawn curly arrows */
+    };
 
-  <!-- ═══════════════════════════════════════
-       NAV
-  ═══════════════════════════════════════ -->
-  <nav class="nav">
-    <span class="nav-logo">sonya.</span>
-    <ul class="nav-links">
-      <li><a href="#about">about</a></li>
-      <li><a href="#projects">projects</a></li>
-      <li><a href="#research">research</a></li>
-      <li><a href="#interests">interests</a></li>
-      <li><a href="#contact">contact</a></li>
-    </ul>
-  </nav>
+    /* ── 4-pointed star, slightly organic ── */
+    function Star({ sz, t, l, r, b, op=0.72 }) {
+      return h('svg', { className:'deco', width:sz, height:sz, viewBox:'0 0 22 22', fill:'none',
+                         style:{top:t, left:l, right:r, bottom:b, opacity:op} },
+        h('path', { d:'M11 1.2L12.9 8.7L20.8 10.8L12.8 12.9L11 21L9.1 13.1L1.2 11L9.3 8.6Z',
+                    stroke:C.spark, strokeWidth:'1.3', strokeLinejoin:'round' })
+      );
+    }
 
-  <!-- ═══════════════════════════════════════
-       HERO
-       Floating objects live here as absolutely
-       positioned <img> or <div> elements.
-       Add them in the .hero-objects container.
-  ═══════════════════════════════════════ -->
-  <section class="hero" id="hero">
+    /* ── tiny plus / cross ── */
+    function Plus({ sz=8, t, l, r, b, op=0.55 }) {
+      const m = sz/2;
+      return h('svg', { className:'deco', width:sz, height:sz, viewBox:`0 0 ${sz} ${sz}`, fill:'none',
+                         style:{top:t, left:l, right:r, bottom:b, opacity:op} },
+        h('path', { d:`M${m} 0.5 L${m} ${sz-0.5} M0.5 ${m} L${sz-0.5} ${m}`,
+                    stroke:C.spark, strokeWidth:'1.2', strokeLinecap:'round' })
+      );
+    }
 
-    <!-- Floating object slots — swap src for real images later -->
-    <div class="hero-objects">
-      <div class="obj obj-1" data-label="smiski"><!-- 🟡 smiski figure --></div>
-      <div class="obj obj-2" data-label="matcha"><!-- 🍵 matcha --></div>
-      <div class="obj obj-3" data-label="camera"><!-- 📷 fujifilm --></div>
-      <div class="obj obj-4" data-label="laptop"><!-- 💻 laptop --></div>
-      <div class="obj obj-5" data-label="cat"><!-- 🐱 cat --></div>
-      <div class="obj obj-6" data-label="book"><!-- 📖 book --></div>
-    </div>
+    /* ── horizontal curly swoosh arrows beside the label ── */
+    const ARROWS = {
+      /* left-side: sits to the RIGHT of the button, curving left toward it */
+      left:  { arc:'M50 15 C 35 5, 15 10, 8 28',  head:'M8 28 L5 18 M8 28 L18 26' },
+      /* right-side: sits to the LEFT of the button, curving right toward it */
+      right: { arc:'M5 15 C 20 5, 40 10, 47 28',  head:'M47 28 L50 18 M47 28 L37 26' },
+    };
+    function Arrow({ side }) {
+      const a = ARROWS[side] || ARROWS.left;
+      return h('svg', { className:'arrow', width:55, height:45, viewBox:'0 0 55 45',
+                         fill:'none', style:{ display:'block', overflow:'visible' } },
+        h('path', { d:a.arc,  stroke:C.arrow, strokeWidth:'1.5', fill:'none', strokeLinecap:'round' }),
+        h('path', { d:a.head, stroke:C.arrow, strokeWidth:'1.5', fill:'none', strokeLinecap:'round' }),
+      );
+    }
 
-    <div class="hero-content">
-      <p class="hero-eyebrow">aerospace · ML · math</p>
-      <h1 class="hero-headline">hi, i'm sonya.</h1>
-      <p class="hero-sub">
-        incoming UCSD ML grad student.<br>
-        i build things at the edge of math and machines.
-      </p>
-      <div class="hero-cta">
-        <a href="#projects" class="btn-primary">see my work</a>
-        <a href="#contact" class="btn-ghost">get in touch</a>
-      </div>
-    </div>
+    /* ── object group: object image + note label, floating as one clickable unit ── */
+    function ObjGroup({ src, alt, w, href, label, labelSrc, labelW, rotate, ox, oy }) {
+      return h('div', { className:'objgrp', style:{ left: ox || 0, top: oy || 0 } },
+        h('a', { href, className:'objgrp-float', 'aria-label':label },
+          h('img', { src, alt, style:{ width:w, transform: rotate ? `rotate(${rotate}deg)` : 'none' } }),
+        ),
+      );
+    }
 
-  </section>
+    /* ── pen-drawn wobbly underline ── */
+    function Squiggle({ width:w, color }) {
+      const d2 = `M1 7 C${w*.1} 1.5 ${w*.23} 12.5 ${w*.42} 6.5 C${w*.57} 1.5 ${w*.72} 12 ${w*.87} 6 C${w*.93} 3.5 ${w*.97} 9 ${w-1} 6.5`;
+      return h('svg', { width:w, height:14, viewBox:`0 0 ${w} 14`, fill:'none', style:{display:'block'} },
+        h('path', { d:d2, stroke:color || C.maroon, strokeWidth:'2', strokeLinecap:'round', fill:'none' })
+      );
+    }
 
-  <!-- ═══════════════════════════════════════
-       ABOUT
-  ═══════════════════════════════════════ -->
-  <section class="section" id="about">
-    <div class="section-inner">
-      <h2 class="section-title">about</h2>
-      <div class="about-grid">
-        <div class="about-text">
-          <p>
-            B.S. Aerospace Engineering + Mathematics, Penn State Schreyer Honors College.
-            Starting M.S. Machine Learning & Data Science (ECE) at UCSD, Fall 2026.
-          </p>
-          <p>
-            My work lives at the intersection of rigorous math and applied ML —
-            random matrix theory, fractal geometry, neural signal analysis.
-          </p>
-          <p>
-            Outside of research: film photography (Fujifilm X-T5), cycling, slow travel,
-            and hunting for good matcha.
-          </p>
-        </div>
-        <div class="about-photo">
-          <!-- Drop your photo here -->
-          <div class="photo-placeholder">[photo]</div>
-        </div>
-      </div>
-    </div>
-  </section>
+    /* ── Sonya side deco marks ── */
+    function DecoLeft() { // ' // marks
+      return h('svg', { width:16, height:34, viewBox:'0 0 16 34', fill:'none',
+                         style:{position:'absolute', bottom:8, right:'100%', marginRight:7,
+                                pointerEvents:'none'} },
+        h('path', { d:'M10 3 C9 1 7 1 8 4.5', stroke:C.deco, strokeWidth:'1.35', strokeLinecap:'round' }),
+        h('path', { d:'M9 11 L5 23', stroke:C.deco, strokeWidth:'1.1', strokeLinecap:'round' }),
+        h('path', { d:'M13 10 L9 22', stroke:C.deco, strokeWidth:'1.1', strokeLinecap:'round' }),
+      );
+    }
+    function DecoRight() { // \\ ' marks
+      return h('svg', { width:16, height:34, viewBox:'0 0 16 34', fill:'none',
+                         style:{position:'absolute', bottom:8, left:'100%', marginLeft:7,
+                                pointerEvents:'none'} },
+        h('path', { d:'M3 11 L7 23', stroke:C.deco, strokeWidth:'1.1', strokeLinecap:'round' }),
+        h('path', { d:'M7 10 L11 22', stroke:C.deco, strokeWidth:'1.1', strokeLinecap:'round' }),
+        h('path', { d:'M6 27 C7 24.5 9 24.5 8 28', stroke:C.deco, strokeWidth:'1.35', strokeLinecap:'round' }),
+      );
+    }
 
-  <!-- ═══════════════════════════════════════
-       PROJECTS
-  ═══════════════════════════════════════ -->
-  <section class="section section-alt" id="projects">
-    <div class="section-inner">
-      <h2 class="section-title">projects</h2>
-      <div class="project-grid">
+    /* ── heading with hand-drawn underline ── */
+    function SecHead({ children, width=120 }) {
+      return h('div', { className:'sec-head' },
+        children,
+        h('div', { className:'ul' }, h(Squiggle, { width })),
+      );
+    }
 
-        <article class="project-card">
-          <div class="project-tag">ML · Neuroscience</div>
-          <h3 class="project-name">EEG Seizure Detection</h3>
-          <p class="project-desc">
-            CNN-based seizure detection on the CHB-MIT scalp EEG dataset.
-            Patient-specific label construction, vectorized inference pipeline.
-          </p>
-          <div class="project-links">
-            <a href="#" class="link-arrow">GitHub →</a>
-            <a href="#" class="link-arrow">Paper →</a>
-          </div>
-        </article>
+    /* scattered background stars for a section */
+    function SecStars({ marks }) {
+      return marks.map((m, i) => h(Star, { key:i, ...m }));
+    }
 
-        <article class="project-card">
-          <div class="project-tag">ML · Math</div>
-          <h3 class="project-name">Neural Network Pruning via RMT</h3>
-          <p class="project-desc">
-            Honors thesis. Applied Random Matrix Theory to identify redundant
-            weights in neural networks. Published in AIAA.
-          </p>
-          <div class="project-links">
-            <a href="#" class="link-arrow">AIAA Paper →</a>
-          </div>
-        </article>
+    /* ══════════════════════════════════════
+       CONTENT SECTIONS
+    ══════════════════════════════════════ */
+    function About() {
+      return h('section', { id:'about', className:'section' },
+        h(Star, { sz:11, t:70,  r:60,  op:0.5 }),
+        h(Star, { sz:8,  t:130, r:120, op:0.42 }),
+        h(SecHead, { width:96 }, 'about'),
+        h('div', { className:'about-grid' },
+          h('div', { className:'about-text' },
+            h('p', {},
+              'B.S. Aerospace Engineering + Mathematics, Penn State Schreyer Honors College. ',
+              'Starting M.S. Machine Learning & Data Science (ECE) at UCSD, Fall 2026.'),
+            h('p', {},
+              'My work lives at the intersection of rigorous math and applied ML — ',
+              'random matrix theory, fractal geometry, neural signal analysis.'),
+            h('p', {},
+              'Outside of research: film photography (Fujifilm X-T5), cycling, slow travel, ',
+              'and hunting for good matcha.'),
+          ),
+          h('div', { className:'about-photo' },
+            h('img', { src:'me_new.png', alt:'Sonya' }),
+            h('div', { className:'cap' }, 'that’s me ♡'),
+          ),
+        ),
+      );
+    }
 
-        <article class="project-card">
-          <div class="project-tag">Coming soon</div>
-          <h3 class="project-name">+ add your own</h3>
-          <p class="project-desc">
-            Slot for a future project — side project, internship work, etc.
-          </p>
-          <div class="project-links"></div>
-        </article>
+    function Interests() {
+      const items = [
+        '📷 film photography', '🚴 cycling', '🍵 matcha', '✈️ slow travel',
+        '🛋️ interior design', '📐 measure theory', '🐱 cats', '📸 @hey_this_is_s',
+      ];
+      return h('section', { id:'interests', className:'section' },
+        h(Star, { sz:12, t:64,  l:40,  op:0.5 }),
+        h(Star, { sz:8,  b:60,  r:80,  op:0.42 }),
+        h(Plus, { sz:9,  t:120, r:50,  op:0.4 }),
+        h(SecHead, { width:230 }, 'when i’m not coding'),
+        h('div', { className:'sec-sub' }, 'a few things i love'),
+        h('div', { className:'chips' },
+          items.map((it,i) => h('div', { key:i, className:'chip' }, it)),
+        ),
+      );
+    }
 
-      </div>
-    </div>
-  </section>
+    function Projects() {
+      const cards = [
+        { tag:'ML · Neuroscience', name:'EEG Seizure Detection',
+          desc:'CNN-based seizure detection on the CHB-MIT scalp EEG dataset. Patient-specific label construction, vectorized inference pipeline.',
+          links:[['GitHub','#'],['Paper','#']] },
+        { tag:'ML · Math', name:'Neural Network Pruning via RMT',
+          desc:'Honors thesis. Applied Random Matrix Theory to identify redundant weights in neural networks. Published in AIAA.',
+          links:[['AIAA Paper','#']] },
+        { tag:'Coming soon', name:'More on the way',
+          desc:'Side projects, internship work, and research experiments — stay tuned.',
+          links:[] },
+      ];
+      return h('section', { id:'projects', className:'section' },
+        h(Star, { sz:11, t:66,  r:50,  op:0.5 }),
+        h(Plus, { sz:9,  t:120, l:30,  op:0.4 }),
+        h(SecHead, { width:120 }, 'projects'),
+        h('div', { className:'sec-sub' }, 'things i’ve built'),
+        h('div', { className:'proj-grid' },
+          cards.map((c,i) => h('div', { key:i, className:'proj-card' },
+            h('div', { className:'proj-tag' }, c.tag),
+            h('div', { className:'proj-name' }, c.name),
+            h('div', { className:'proj-desc' }, c.desc),
+            c.links.length ? h('div', { className:'proj-links' },
+              c.links.map((l,j) => h('a', { key:j, href:l[1] }, l[0]+' →'))) : null,
+          )),
+        ),
+      );
+    }
 
-  <!-- ═══════════════════════════════════════
-       RESEARCH
-  ═══════════════════════════════════════ -->
-  <section class="section" id="research">
-    <div class="section-inner">
-      <h2 class="section-title">research</h2>
-      <div class="research-list">
+    function Education() {
+      const items = [
+        { year:'2026 →', title:'M.S. Machine Learning & Data Science — UCSD',
+          desc:'ECE department. Incoming Fall 2026. Focus on deep learning, signal processing, and applied mathematics.' },
+        { year:'2022 – 26', title:'B.S. Aerospace Engineering + Mathematics — Penn State',
+          desc:'Schreyer Honors College. Honors thesis on neural network pruning via Random Matrix Theory, published in AIAA.' },
+        { year:'2025 →', title:'Multi-Agent Bartering Simulation — Research',
+          desc:'LLM agents studied for preference drift and rhetoric contagion. CoT-based metrics, Hurst exponent for hoarding detection. Dr. Wagner’s group.' },
+      ];
+      return h('section', { id:'education', className:'section' },
+        h(Star, { sz:12, t:64,  l:44,  op:0.5 }),
+        h(Star, { sz:8,  b:80,  r:60,  op:0.42 }),
+        h(SecHead, { width:130 }, 'education'),
+        h('div', { className:'sec-sub' }, 'where i’ve studied & researched'),
+        h('div', { className:'edu-list' },
+          items.map((it,i) => h('div', { key:i, className:'edu-item' },
+            h('div', { className:'edu-year' }, it.year),
+            h('div', { className:'edu-body' },
+              h('h3', {}, it.title),
+              h('p', {}, it.desc),
+            ),
+          )),
+        ),
+      );
+    }
 
-        <div class="research-item">
-          <span class="research-year">2025–</span>
-          <div class="research-body">
-            <h3>Multi-Agent Bartering Simulation</h3>
-            <p>
-              LLM agents studied for preference drift and rhetoric contagion.
-              Metrics design focus — CoT-based metrics, Hurst exponent for hoarding detection.
-              Dr. Wagner's group, Penn State.
-            </p>
-          </div>
-        </div>
+    function Contact() {
+      const links = [
+        ['email', 'mailto:sona.bogacheva@gmail.com'],
+        ['linkedin', 'https://linkedin.com/in/sonyabogacheva'],
+        ['github', 'https://github.com/sonyachka-b'],
+        ['instagram', 'https://instagram.com/hey_this_is_s'],
+      ];
+      return h('section', { id:'contact', className:'section contact' },
+        h(Star, { sz:12, t:60,  l:'46%', op:0.5 }),
+        h(Star, { sz:9,  t:110, r:'30%', op:0.42 }),
+        h(SecHead, { width:96 }, 'say hi'),
+        h('p', { className:'contact-sub' },
+          'open to research collabs, internships, and good coffee recommendations.'),
+        h('div', { className:'contact-links' },
+          links.map((l,i) => h('a', { key:i, href:l[1] }, l[0])),
+        ),
+      );
+    }
 
-        <div class="research-item">
-          <span class="research-year">2024–</span>
-          <div class="research-body">
-            <h3>EEG Seizure Detection CNN</h3>
-            <p>
-              Building and evaluating deep learning pipelines on CHB-MIT dataset.
-              Multifractal analysis + fractal geometry as feature extraction angle.
-            </p>
-          </div>
-        </div>
+    /* ══════════════════════════════════════
+       APP
+    ══════════════════════════════════════ */
+    function App() {
+      return h('div', { id:'app' },
 
-      </div>
-    </div>
-  </section>
+        /* NAV */
+        h('nav', { className:'nav' },
+          ['about','interests','projects','education','contact'].map(item =>
+            h('a', { key:item, href:`#${item}`, className:item==='about'?'active':'' }, item)
+          )
+        ),
 
-  <!-- ═══════════════════════════════════════
-       INTERESTS
-       This is a good section for floating-object
-       style layout — each interest as a "chip" or
-       scattered card.
-  ═══════════════════════════════════════ -->
-  <section class="section section-alt" id="interests">
-    <div class="section-inner">
-      <h2 class="section-title">when i'm not coding</h2>
-      <div class="interests-scatter">
-        <div class="interest-chip">📷 film photography</div>
-        <div class="interest-chip">🚴 cycling</div>
-        <div class="interest-chip">🍵 matcha</div>
-        <div class="interest-chip">✈️ slow travel</div>
-        <div class="interest-chip">🛋️ interior design</div>
-        <div class="interest-chip">📐 measure theory</div>
-        <div class="interest-chip">🐱 cats</div>
-        <div class="interest-chip">📸 instagram @hey_this_is_s</div>
-      </div>
-    </div>
-  </section>
+        /* HERO */
+        h('div', { className:'hero' },
+          h('div', { className:'hero-inner' },
 
-  <!-- ═══════════════════════════════════════
-       CONTACT
-  ═══════════════════════════════════════ -->
-  <section class="section" id="contact">
-    <div class="section-inner contact-inner">
-      <h2 class="section-title">say hi</h2>
-      <p class="contact-sub">open to research collabs, internships, and good coffee recommendations.</p>
-      <div class="contact-links">
-        <a href="mailto:you@email.com" class="contact-link">email</a>
-        <a href="https://linkedin.com/in/yourhandle" class="contact-link">linkedin</a>
-        <a href="https://github.com/yourhandle" class="contact-link">github</a>
-        <a href="https://instagram.com/hey_this_is_s" class="contact-link">instagram</a>
-      </div>
-    </div>
-  </section>
+            /* ═══ LEFT COLUMN — blob (top) + camera (bottom) ═══ */
+            h('div', { className:'col col-left' },
+              h(ObjGroup, { src:'smiski.png', alt:'smiski', w:221, side:'left', ox:18,
+                            href:'#interests', label:'interests', labelSrc:'interests.png' }),
+              h(ObjGroup, { src:'camera.png', alt:'camera', w:191, side:'left', oy:-40,
+                            href:'#projects', label:'projects', labelSrc:'projects.png' }),
+            ),
 
-  <!-- ═══════════════════════════════════════
-       FOOTER
-  ═══════════════════════════════════════ -->
-  <footer class="footer">
-    <p>© 2026 sonya — built from scratch</p>
-  </footer>
+            /* ═══ CENTER COLUMN — text (left) + girl (right) ═══ */
+            h('div', { className:'col-center' },
+              h('div', { className:'title-block' },
+                h('h1', {},
+                  h('span', { className:'t-hey' }, 'hey,'),
+                  h('span', { className:'t-sm' }, 'this is'),
+                  h('span', { className:'t-lg', style:{position:'relative'} },
+                    'Sonya',
+                    /* 2 short radial lines off the bottom-left of the "S" — at 225°/250°, lower */
+                    h('svg', { width:22, height:20, viewBox:'0 0 22 20', fill:'none',
+                               style:{position:'absolute', left:-22, bottom:-10, pointerEvents:'none'} },
+                      h('path', { d:'M16 5 L9.45 9.6',  stroke:'#A63D1A', strokeWidth:'2.6', strokeLinecap:'round' }), /* 215° */
+                      h('path', { d:'M20 8 L15.4 14.55', stroke:'#A63D1A', strokeWidth:'2.6', strokeLinecap:'round' }), /* 235° */
+                    ),
+                    /* 3 short radial lines off the top-right of the "a" — fanned at 30°/45°/65°, spaced apart */
+                    h('svg', { width:24, height:30, viewBox:'0 0 24 30', fill:'none',
+                               style:{position:'absolute', right:-12, top:8, pointerEvents:'none'} },
+                      h('path', { d:'M13 27 L19.9 23',   stroke:'#A63D1A', strokeWidth:'2.6', strokeLinecap:'round' }), /* 30° */
+                      h('path', { d:'M9 24 L14.7 18.3',  stroke:'#A63D1A', strokeWidth:'2.6', strokeLinecap:'round' }), /* 45° */
+                      h('path', { d:'M5 22 L8.4 14.75',  stroke:'#A63D1A', strokeWidth:'2.6', strokeLinecap:'round' }), /* 65° */
+                    ),
+                  ),
+                ),
+                h('p', { className:'title-desc' },
+                  'One day I realized I like people, technology, and being creative. ',
+                  'So I asked myself, “Why not combine all 3 and do it for a living?” :)',
+                ),
+                h('p', { className:'title-hand' }, 'nice to meet you!'),
+              ),
+              /* girl — center-right, top-aligned with text */
+              h('div', { className:'illo' },
+                h('img', { src:'me_new.png', alt:'Sonya' }),
+              ),
+            ),
 
-  <script src="script.js"></script>
+            /* ═══ RIGHT COLUMN — laptop (top) + matcha (bottom) ═══ */
+            h('div', { className:'col col-right' },
+              h(ObjGroup, { src:'macbook.png', alt:'laptop', w:272, rotate:-5, side:'right', oy:-24,
+                            href:'#education', label:'education', labelSrc:'education.png' }),
+              h(ObjGroup, { src:'matcha.png', alt:'matcha', w:196, side:'right', ox:20, oy:-58,
+                            href:'#about', label:'about me', labelSrc:'aboutme.png' }),
+            ),
+
+          ),
+
+          /* ═══ SCROLL HINT — near viewport bottom ═══ */
+          h('a', { href:'#about', className:'scroll-hint' },
+            h('span', {}, 'scroll to explore'),
+            h('span', { style:{fontSize:13} }, '↓'),
+          ),
+        ),
+
+        /* ── CONTENT SECTIONS ── */
+        h(About),
+        h('div', { className:'sec-divider' }),
+        h(Interests),
+        h('div', { className:'sec-divider' }),
+        h(Projects),
+        h('div', { className:'sec-divider' }),
+        h(Education),
+        h('div', { className:'sec-divider' }),
+        h(Contact),
+
+        /* ── FOOTER ── */
+        h('footer', { className:'footer' },
+          h('span', {}, '© 2026 sonya — '),
+          h('span', { className:'heart' }, 'built from scratch with ♡'),
+        ),
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(h(App, null));
+  </script>
 </body>
 </html>
